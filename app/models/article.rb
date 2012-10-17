@@ -122,6 +122,19 @@ class Article < Content
 
   end
 
+  def self.merge(article1,article2)
+    ar1 = Article.find(article1)
+    ar2 = Article.find(article2)
+    ar1[:body] = ar1[:body] + " " + ar2[:body]
+    ar2.comments.each do |comment|
+      comment.article = ar1
+      comment.save!
+    end
+    ar2.comments(true)
+    ar1.save!
+    ar2.destroy
+  end
+
   def year_url
     published_at.year.to_s
   end

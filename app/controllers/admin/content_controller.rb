@@ -27,6 +27,20 @@ class Admin::ContentController < Admin::BaseController
     new_or_edit
   end
 
+  def merge_article
+    article_1 = params[:current_ar]
+    article_2 = params[:merge_with]
+    if article_1 == article_2
+      flash[:error] = "Merge unsuccessfully. Can not merge the same article."
+    elsif !Article.exists?(article_1) or !Article.exists?(article_2)
+      flash[:error] = "Merge unsuccessfully. Article does not exist."
+    else
+      Article.merge(article_1,article_2)    
+      flash[:notice] = "Merge successfully."
+    end
+    redirect_to :action => 'index'
+  end
+
   def edit
     @article = Article.find(params[:id])
     unless @article.access_by? current_user

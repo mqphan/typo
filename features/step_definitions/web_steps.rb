@@ -43,6 +43,11 @@ Given /^the blog is set up$/ do
                 :state => 'active'})
 end
 
+Given /^the regular blogger "(.*)" account is set up$/ do |name|
+  User.create!({:login => "#{name}", :password => 'aaaaaaaa', :email => "#{name}@snow.com",
+                :profile_id => 2,  :name => "#{name}", :state => 'active'})
+end
+
 And /^I am logged into the admin panel$/ do
   visit '/accounts/login'
   fill_in 'user_login', :with => 'admin'
@@ -53,6 +58,22 @@ And /^I am logged into the admin panel$/ do
   else
     assert page.has_content?('Login successful')
   end
+end
+
+And /^I am logged into the regular blogger "(.*)" panel$/ do |name|
+  visit '/accounts/login'
+  fill_in 'user_login', :with => "#{name}"
+  fill_in 'user_password', :with => 'aaaaaaaa'
+  click_button 'Login'
+  if page.respond_to? :should
+    page.should have_content('Login successful')
+  else
+    assert page.has_content?('Login successful')
+  end
+end
+
+And /^I am logged out$/ do
+  visit '/accounts/logout'
 end
 
 # Single-line step scoper
